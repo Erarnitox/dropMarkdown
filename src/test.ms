@@ -1,7 +1,10 @@
 .R1
 accumulate
+
 database bib.ref
+
 move-punctuation
+
 .R2
 
 .TL
@@ -15,7 +18,10 @@ DropSoft
 
 .AB
 .PP
-This Document is an example Document on how to use drop-markdown.Which is a wrapper around groff for easy writing for papers to be publishedon dropsoft.org
+This Document is an example Document on how to use drop-markdown.Which is a wrapper around groff for easy writing of papers to be published on 
+.B dropsoft.org
+
+
 .AE
 
 .bp
@@ -48,5 +54,28 @@ down deeep
 .XE
 .PP
 Goes down to 6 sub levels
+.B1
 .QP
 This is a small quoted paragraph. I really hope this will work!
+.B2
+.NH 2
+Testing bold text
+.XS
+Testing bold text
+.XE
+.PP
+This is a small 
+.I test
+for 
+.B bold
+text.
+.NH 2
+Testing italic text
+.XS
+Testing italic text
+.XE
+.PP
+This is a small test for 
+.I italic
+text.
+.TC
