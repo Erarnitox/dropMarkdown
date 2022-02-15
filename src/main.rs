@@ -11,7 +11,9 @@ fn main() {
     let out_pdf = String::from(out_filename) + "pdf";
     let out_filename = String::from(out_filename) + "ms";
 
-    create_ms(&filename, &out_filename);
+    let ms_string = create_ms(&filename);
+    write_ms(&ms_string, &out_filename);
+
     create_pdf(&out_filename, &out_pdf);
 }
 
@@ -32,6 +34,11 @@ fn create_pdf(ms_file: &String, pdf_file: &String){
         out_pdf.write_all(output.stdout.as_slice()).expect("Can't write to pdf file!");
 }
 
+fn write_ms(ms_string : &String, ms_file : &String){
+    let mut out_file = std::fs::File::create(&ms_file).expect("Can't create the ms file! ;(");
+    out_file.write_all(ms_string.as_bytes()).expect("Can't write to ms file :/");
+}
+
 fn parse_args(args: &[String]) -> &String {
     &args[1]
 }
@@ -41,95 +48,94 @@ fn read_contents(filename: &String) -> String {
         .expect("Can't open the file!")
 }
 
-fn create_ms(drop_file: &String, ms_file: &String){
+fn create_ms(drop_file: &String) -> String {
     let contents: String = read_contents(&drop_file);
+    let mut ms_string = String::new();
 
-    let mut out_file = std::fs::File::create(&ms_file).expect("Can't create the ms file!");
-    out_file.write_all(".R1\naccumulate\n\ndatabase bib.ref\n\nmove-punctuation\n\n.R2\n\n".as_bytes())
-        .expect("Writing to output file failed!");
+    ms_string += ".R1\naccumulate\n\ndatabase bib.ref\n\nmove-punctuation\n\n.R2\n\n";
 
     let mut in_paragraph: bool = false;
     let mut in_quote: bool = false;
     for line in contents.lines(){
         if line.starts_with("#T "){
-            out_file.write_all(".TL\n".as_bytes()).expect("Can't write output!");
-            out_file.write_all(line[3..].as_bytes()).expect("Can't write output!");
+            ms_string += ".TL\n";
+            ms_string += &line[3..];
         }else if line.starts_with("#A "){
-            out_file.write_all("\n.AU\n".as_bytes()).expect("Can't write output!");
-            out_file.write_all(line[3..].as_bytes()).expect("Can't write output!");
+            ms_string += "\n.AU\n";
+            ms_string += &line[3..];
         }else if line.starts_with("#I "){
-            out_file.write_all("\n.AI\n".as_bytes()).expect("Can't write output!");
-            out_file.write_all(line[3..].as_bytes()).expect("Can't write output!");
+            ms_string += "\n.AI\n";
+            ms_string += &line[3..];
         }else if line.starts_with("#Date"){
-            out_file.write_all(".DA\n".as_bytes()).expect("Can't write output!");
+            ms_string += ".DA\n";
         }else if line.starts_with("#Break"){
-            out_file.write_all(".bp\n".as_bytes()).expect("Can't write output!");
+            ms_string += ".bp\n";
         }else if line.starts_with("#SmallerText"){
-            out_file.write_all(".SM\n".as_bytes()).expect("Can't write output!");
+            ms_string += ".SM\n";
         }else if line.starts_with("#LargerText"){
-            out_file.write_all(".LG\n".as_bytes()).expect("Can't write output!");
+            ms_string += ".LG\n";
         }else if line.starts_with("#NormalText"){
-            out_file.write_all(".NL\n".as_bytes()).expect("Can't write output!");
+            ms_string += ".NL\n";
         }else if line.starts_with("#TOC"){
-            out_file.write_all(".TC\n".as_bytes()).expect("Can't write output!");
+            ms_string += ".TC\n";
         }else if line.starts_with("#AbstractBegin"){
-            out_file.write_all(".AB\n".as_bytes()).expect("Can't write output!");
+            ms_string += ".AB\n";
         }else if line.starts_with("#AbstractEnd"){
-            out_file.write_all("\n.AE\n".as_bytes()).expect("Can't write output!");
+            ms_string += "\n.AE\n";
         }else if line.starts_with("# "){
-            out_file.write_all(".NH 1\n".as_bytes()).expect("Can't write output!");
-            out_file.write_all(line[2..].as_bytes()).expect("Can't write output!");
-            out_file.write_all("\n.XS\n".as_bytes()).expect("Can't write output!");
-            out_file.write_all(line[2..].as_bytes()).expect("Can't write output!");
-            out_file.write_all("\n.XE\n".as_bytes()).expect("Can't write output!");
+            ms_string += ".NH 1\n";
+            ms_string += &line[2..];
+            ms_string += "\n.XS\n";
+            ms_string += &line[2..];
+            ms_string += "\n.XE\n";
         }else if line.starts_with("## "){
-            out_file.write_all(".NH 2\n".as_bytes()).expect("Can't write output!");
-            out_file.write_all(line[3..].as_bytes()).expect("Can't write output!");
-            out_file.write_all("\n.XS\n".as_bytes()).expect("Can't write output!");
-            out_file.write_all(line[3..].as_bytes()).expect("Can't write output!");
-            out_file.write_all("\n.XE\n".as_bytes()).expect("Can't write output!");
+            ms_string += ".NH 2\n";
+            ms_string += &line[3..];
+            ms_string += "\n.XS\n";
+            ms_string += &line[3..];
+            ms_string += "\n.XE\n";
         }else if line.starts_with("### "){
-            out_file.write_all(".NH 3\n".as_bytes()).expect("Can't write output!");
-            out_file.write_all(line[4..].as_bytes()).expect("Can't write output!");
-            out_file.write_all("\n.XS\n".as_bytes()).expect("Can't write output!");
-            out_file.write_all(line[4..].as_bytes()).expect("Can't write output!");
-            out_file.write_all("\n.XE\n".as_bytes()).expect("Can't write output!");
+            ms_string += ".NH 3\n";
+            ms_string += &line[4..];
+            ms_string += "\n.XS\n";
+            ms_string += &line[4..];
+            ms_string += "\n.XE\n";
         }else if line.starts_with("#### "){
-            out_file.write_all(".NH 4\n".as_bytes()).expect("Can't write output!");
-            out_file.write_all(line[5..].as_bytes()).expect("Can't write output!");
-            out_file.write_all("\n.XS\n".as_bytes()).expect("Can't write output!");
-            out_file.write_all(line[5..].as_bytes()).expect("Can't write output!");
-            out_file.write_all("\n.XE\n".as_bytes()).expect("Can't write output!");
+            ms_string += ".NH 4\n";
+            ms_string += &line[5..];
+            ms_string += "\n.XS\n";
+            ms_string += &line[5..];
+            ms_string += "\n.XE\n";
         }else if line.starts_with("##### "){
-            out_file.write_all(".NH 5\n".as_bytes()).expect("Can't write output!");
-            out_file.write_all(line[6..].as_bytes()).expect("Can't write output!");
-            out_file.write_all("\n.XS\n".as_bytes()).expect("Can't write output!");
-            out_file.write_all(line[6..].as_bytes()).expect("Can't write output!");
-            out_file.write_all("\n.XE\n".as_bytes()).expect("Can't write output!");
+            ms_string += ".NH 5\n";
+            ms_string += &line[6..];
+            ms_string += "\n.XS\n";
+            ms_string += &line[6..];
+            ms_string += "\n.XE\n";
         }else if line.starts_with("###### "){
-            out_file.write_all(".NH 6\n".as_bytes()).expect("Can't write output!");
-            out_file.write_all(line[7..].as_bytes()).expect("Can't write output!");
-            out_file.write_all("\n.XS\n".as_bytes()).expect("Can't write output!");
-            out_file.write_all(line[7..].as_bytes()).expect("Can't write output!");
-            out_file.write_all("\n.XE\n".as_bytes()).expect("Can't write output!");
+            ms_string += ".NH 6\n";
+            ms_string += &line[7..];
+            ms_string += "\n.XS\n";
+            ms_string += &line[7..];
+            ms_string += "\n.XE\n";
         }else if line.starts_with("#Quote"){
             in_paragraph = true;
             in_quote = true;
-            out_file.write_all(".B1\n.QP\n".as_bytes()).expect("Can't write output!");
+            ms_string += ".B1\n.QP\n";
         }else if line.trim().is_empty(){
             in_paragraph = false;
             if in_quote {
-                out_file.write_all("\n.B2\n".as_bytes()).expect("Can't write output!");
+                ms_string += "\n.B2\n";
                 in_quote = false;
             }else{
-                out_file.write_all("\n".as_bytes()).expect("Can't write output!");
+                ms_string += "\n";
             }
         }
 
         else{
             if !in_paragraph {
                 in_paragraph = true;
-                out_file.write_all(".PP\n".as_bytes()).expect("Can't write output!");
+                ms_string += ".PP\n";
             }
 
             if line.contains("**") || line.contains("++"){
@@ -140,7 +146,7 @@ fn create_ms(drop_file: &String, ms_file: &String){
 
                 for s in sub_strings{
                     if is_bold {
-                        out_file.write_all("\n.B ".as_bytes()).expect("Can't write output!");
+                        ms_string += "\n.B ";
                     }
 
                     if s.contains("++"){
@@ -148,33 +154,34 @@ fn create_ms(drop_file: &String, ms_file: &String){
 
                         for i in sub_italics{
                             if is_italic {
-                                out_file.write_all("\n.I ".as_bytes()).expect("Can't write output!");
+                                ms_string += "\n.I ";
                             }
 
-                            out_file.write_all(i.trim_start().as_bytes()).expect("Can't write output!");
+                            ms_string += i.trim_start();
                             if is_italic {
-                                out_file.write_all("\n".as_bytes()).expect("Can't write output!");
+                                ms_string += "\n";
                             }
 
                             is_italic = !is_italic;
                         }
                     }else{
-                        out_file.write_all(s.trim_start().as_bytes()).expect("Can't write output!");
+                        ms_string += s.trim_start();
                     }
 
                     if is_bold {
-                        out_file.write_all("\n".as_bytes()).expect("Can't write output!");
+                        ms_string += "\n";
                     }
 
                     is_bold = !is_bold;
                 }
             }else{
-                out_file.write_all(line.as_bytes()).expect("Can't write output!");
+                ms_string += line;
             }
 
             if line.ends_with("  "){
-                out_file.write_all("\n\n".as_bytes()).expect("Can't write output!");
+                ms_string += "\n\n";
             }
         }
     }
+    ms_string
 }
