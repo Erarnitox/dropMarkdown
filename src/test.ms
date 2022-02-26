@@ -78,4 +78,17 @@ Testing italic text
 This is a small test for 
 .I italic
 text.
+.NH 2
+Pictures
+.XS
+Pictures
+.XE
+
+.PSPIC "./pic/unknown.eps" 3i 21
+.ce
+description
+
+
+.PP
+.PSPIC "pic/36thchamberofshaolin2.eps"
 .TC

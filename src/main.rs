@@ -2,6 +2,7 @@ use std::env;
 use std::fs;
 use std::io::Write;
 use std::process::Command;
+use std::path::Path;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -14,7 +15,33 @@ fn main() {
     let ms_string = create_ms(&filename);
     write_ms(&ms_string, &out_filename);
 
+    convert_pictures(&out_filename);
     create_pdf(&out_filename, &out_pdf);
+}
+
+fn convert_pictures(out_filename: &String) {
+    let file_path = Path::new(out_filename).parent().unwrap();
+    let subdir = "pic";
+    let file_path = file_path.join(subdir);
+    
+    if !file_path.exists() {
+        print!("Picture path was not found!\n");
+        return;
+    }
+
+    for entry in file_path.read_dir().expect("can't read pictures!") {
+        if let Ok(entry) = entry {
+            if entry.path().extension().unwrap() == "eps" {
+                continue;
+            }
+
+            Command::new("convert")
+                .arg(entry.path())
+                .arg(entry.path().with_extension("eps"))
+                .output()
+                .expect("Failed to convert image!");
+        }
+    }
 }
 
 fn create_pdf(ms_file: &String, pdf_file: &String){
@@ -82,6 +109,10 @@ fn create_ms(drop_file: &String) -> String {
             ms_string += ".AB\n";
         }else if line.starts_with("#AbstractEnd"){
             ms_string += "\n.AE\n";
+        }else if line.starts_with("#MathBegin"){
+            ms_string += "\n.EQ\n";
+        }else if line.starts_with("#MathEnd"){
+            ms_string += "\n.EN\n";
         }else if line.starts_with("# "){
             ms_string += ".NH 1\n";
             ms_string += &line[2..];
@@ -118,6 +149,22 @@ fn create_ms(drop_file: &String) -> String {
             ms_string += "\n.XS\n";
             ms_string += &line[7..];
             ms_string += "\n.XE\n";
+        }else if line.starts_with("#Picture"){
+            let mut pic_subs = line.split_ascii_whitespace();
+            pic_subs.next(); //#Picture
+            let pic_path = pic_subs.next();
+            
+            ms_string += ".PSPIC \"./pic/";
+            ms_string += pic_path.unwrap();
+            ms_string += ".eps\" 3i 21\n";
+            ms_string += ".ce\n";
+
+            for word in pic_subs {
+                ms_string += word;
+                ms_string += "\n"
+            }
+            ms_string += "\n";
+
         }else if line.starts_with("#Quote"){
             in_paragraph = true;
             in_quote = true;

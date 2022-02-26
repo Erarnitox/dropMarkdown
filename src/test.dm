@@ -34,4 +34,10 @@ This is a small ++test++ for **bold** text.
 ## Testing italic text
 This is a small test for ++italic++ text.
 
+## Pictures
+
+#Picture unknown description
+
+.PSPIC "pic/36thchamberofshaolin2.eps"
+
 #TOC
