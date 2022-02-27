@@ -7,6 +7,10 @@ move-punctuation
 
 .R2
 
+.ps 20
+.vs 24
+.ds FAM Monospace 
+
 .TL
 A test Document
 
@@ -18,7 +22,7 @@ DropSoft
 
 .AB
 .PP
-This Document is an example Document on how to use drop-markdown.Which is a wrapper around groff for easy writing of papers to be published on 
+This Documentööäää is an example Document on how to use drop-markdown.Which is a wrapper around groff for easy writing of papers to be published on 
 .B dropsoft.org
 
 
@@ -47,6 +51,12 @@ And so on
 .XE
 .PP
 You get the point.
+
+.EQ
+.PP
+s = sqrt { { sum from i=1 to inf ( x sub i - x bar ) sup 2 } over { N - 1 } }
+.EN
+
 .NH 4
 down deeep
 .XS
@@ -84,11 +94,39 @@ Pictures
 Pictures
 .XE
 
-.PSPIC "./pic/unknown.eps" 3i 21
+.PSPIC -C "./pic/unknown.eps" 5i 5i 
 .ce
-description
+description 
 
 
+.PSPIC -C "./pic/36thchamberofshaolin2.eps" 5i 5i 
+.ce
+Welcome to the 36th chamber! 
+
+.NH 2
+Code
+.XS
+Code
+.XE
 .PP
-.PSPIC "pic/36thchamberofshaolin2.eps"
+some source highlighting
+.[
+source-highlight
+.]
+, which can be very useful to have tbh. no one will write or read code without some cool colors!
+.B1
+
+.DS I
+.fam C
+\f[CB]\m[darkblue]#include\m[]\fP \fC\m[red]<iostream>\m[]\fP
+
+\m[darkgreen]int\m[] \f[CB]\m[black]main\m[]\fP\m[darkred]()\m[]\m[red]{\m[]
+    std\m[darkred]::\m[]cout \m[darkred]<<\m[] \fC\m[red]"Hello World!"\m[]\fP \m[darkred]<<\m[] std\m[darkred]::\m[]endl\m[darkred];\m[]
+\m[red]}\m[]
+
+.fam
+.DE
+\m[]
+.B2\m[]
+
 .TC
