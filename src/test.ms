@@ -7,9 +7,10 @@ move-punctuation
 
 .R2
 
+.ds N \\fB\\n+n.\\fR
 .ps 20
 .vs 24
-.ds FAM Monospace 
+.fam H
 
 .TL
 A test Document
