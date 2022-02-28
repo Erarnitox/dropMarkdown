@@ -97,6 +97,7 @@ fn create_ps(ms_file: &String, ps_file: &String){
         .output()
         .expect("Failed to call groff. Make sure groff is installed!");
 
+        println!("{}", String::from_utf8(output.stderr).unwrap());
         let mut out_ps = std::fs::File::create(&ps_file).expect("Can't create the ps file!");
         out_ps.write_all(output.stdout.as_slice()).expect("Can't write to ps file!");
 }
@@ -160,6 +161,7 @@ fn color_code(code_file: &String) -> String {
         .output()
         .expect("Failed to call groff. Make sure groff is installed!");
 
+        println!("{}", String::from_utf8(output.stderr).unwrap());
         String::from_utf8(output.stdout).unwrap()
 }
 
@@ -168,7 +170,8 @@ fn create_ms(drop_file: &String) -> String {
     let mut ms_string = String::new();
 
     ms_string += ".R1\naccumulate\n\ndatabase bib.ref\n\nmove-punctuation\n\n.R2\n\n";
-    ms_string += ".ps 20\n.vs 24\n.ds FAM Monospace \n\n";
+    ms_string += ".ds N \\\\fB\\\\n+n.\\\\fR\n";
+    ms_string += ".ps 20\n.vs 24\n.fam \n\n";
     let mut in_paragraph: bool = false;
     let mut in_quote: bool = false;
     for line in contents.lines(){
