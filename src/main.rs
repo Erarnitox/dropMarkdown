@@ -170,8 +170,16 @@ fn create_ms(drop_file: &String) -> String {
     let mut ms_string = String::new();
 
     ms_string += ".R1\naccumulate\n\ndatabase bib.ref\n\nmove-punctuation\n\n.R2\n\n";
-    ms_string += ".ds N \\\\fB\\\\n+n.\\\\fR\n";
-    ms_string += ".ps 20\n.vs 24\n.fam \n\n";
+    //ms_string += ".ds N \\\\fB\\\\n+n.\\\\fR\n";
+    //ms_string += ".ps 20\n.vs 24\n.fam HN\n\n";
+    //ms_string += ".bp";
+
+    //cover page
+    //ms_string += ".PSPIC -C \"./design/cover.eps\n";
+
+    //Add logo:
+    ms_string += ".PSPIC -C \"./design/logo.eps\n\n";
+
     let mut in_paragraph: bool = false;
     let mut in_quote: bool = false;
     for line in contents.lines(){

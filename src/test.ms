@@ -7,10 +7,7 @@ move-punctuation
 
 .R2
 
-.ds N \\fB\\n+n.\\fR
-.ps 20
-.vs 24
-.fam H
+.PSPIC -C "./design/logo.eps
 
 .TL
 A test Document
