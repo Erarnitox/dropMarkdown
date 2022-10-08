@@ -39,7 +39,8 @@ fn initialize(){
     fs::create_dir("pic").expect("Can't create picture Directory \"pic\" consider creating it manually!");
     fs::create_dir("code").expect("Can't create the \"code\" directory! Create it manually!");
 
-    let mut out_string = String::from("#T A dropMarkdown file!\n");
+    let mut out_string = String::from(".FAM A\n.FT R\n");
+    out_string += "#T A dropMarkdown file!\n";
     out_string += "#A Droplet is the author\n";
     out_string += "#I dropsoft.org is the institution\n";
     out_string += "\n# This is a first heading!\n";
@@ -87,6 +88,7 @@ fn convert_pictures(out_filename: &String) {
     }
 }
 
+/*
 fn create_toc_pdf(ms_file: &String, pdf_file: &String){
     let output = Command::new("groff")
         .arg("-ms")
@@ -127,6 +129,7 @@ fn create_toc_pdf(ms_file: &String, pdf_file: &String){
         .output()
         .expect("Failed to call groff. Make sure groff is installed!");
 }
+*/
 
 fn create_ps(ms_file: &String, ps_file: &String){
     let output = Command::new("groff")
@@ -405,6 +408,7 @@ fn create_txt(drop_file: &String) -> String {
     let mut txt_string = String::new();
    
     let mut in_paragraph: bool = false;
+    let mut indentation: i8 = 0;
     let mut in_quote: bool = false;
     for line in contents.lines(){
         if line.starts_with("#T "){
@@ -437,31 +441,37 @@ fn create_txt(drop_file: &String) -> String {
         }else if line.starts_with("#MathEnd"){
             //ms_string += "\n.EN\n";
         }else if line.starts_with("# "){
+            indentation = 1;
             txt_string += "\n-=::[";
             txt_string += &line[2..];
             txt_string += "]::=-\n";
         }else if line.starts_with("## "){
+            indentation = 2;
             txt_string += "\n -=:[";
             txt_string += &line[3..];
             txt_string += "]:=-\n";
         }else if line.starts_with("### "){
+            indentation = 3;
             txt_string += "\n  -=[";
             txt_string += &line[4..];
             txt_string += "]=-\n";
         }else if line.starts_with("#### "){
+            indentation = 4;
             txt_string += "\n   -=";
             txt_string += &line[5..];
             txt_string += "=-\n";
         }else if line.starts_with("##### "){
+            indentation = 5;
             txt_string += "\n    -";
             txt_string += &line[6..];
             txt_string += "-\n";
         }else if line.starts_with("###### "){
+            indentation = 6;
             txt_string += "\n     ";
             txt_string += &line[7..];
             txt_string += "\n";
         }else if line.starts_with("#Picture"){
-            //ascii art to come i guess
+            //TODO: ascii art to come i guess
         }else if line.starts_with("#Quote"){
             in_paragraph = true;
             in_quote = true;
@@ -486,6 +496,7 @@ fn create_txt(drop_file: &String) -> String {
             ms_string += "\n\\m[]\n.B2\\m[]\n";
             */
         }else if line.trim().is_empty(){
+            indentation = 1;
             in_paragraph = false;
             if in_quote {
                 txt_string += "____________________________________________________\n";
@@ -494,6 +505,10 @@ fn create_txt(drop_file: &String) -> String {
                 txt_string += "\n";
             }
         } else{
+            for _i in 0..indentation {
+                txt_string += " ";
+            }
+
             if !in_paragraph {
                 in_paragraph = true;
                 //ms_string += ".PP\n";
