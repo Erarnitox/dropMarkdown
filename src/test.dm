@@ -14,9 +14,15 @@ Which is a wrapper around groff for easy writing of papers to be published on **
 #Break
 
 # Heading
-This was and example heading.  
-a new line.
+This was and example heading. at the end of this line is a space  
+a new line. At the end of this line is no space
 The same line
+
+- this
+- is
+- a test
+- listing
+- loooool
 
 ## A sub heading
 ### And so on
@@ -30,7 +36,10 @@ s = sqrt { { sum from i=1 to inf ( x sub i - x bar ) sup 2 } over { N - 1 } }
 Goes down to 6 sub levels
 
 #Quote
-This is a small quoted paragraph. I really hope this will work!
+This is a small quoted paragraph. 
+I really hope this will work!
+Otherwise idk what to do lol
+hehe there is a box around me
 
 ## Testing bold text
 This is a small ++test++ for **bold** text.
@@ -49,5 +58,3 @@ some source highlighting
 , which can be very useful to have tbh. no one will write or read code without some cool colors!
 
 #Code ./code/main.cpp
-
-#TOC

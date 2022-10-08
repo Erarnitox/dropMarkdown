@@ -7,6 +7,11 @@ move-punctuation
 
 .R2
 
+.ds N \\fB\\n+n.\\fR
+.ps 20
+.vs 24
+.fam HN
+
 .PSPIC -C "./design/logo.eps
 
 .TL
@@ -34,9 +39,20 @@ Heading
 Heading
 .XE
 .PP
-This was and example heading.  
+This was and example heading. at the end of this line is a space  
 
-a new line.The same line
+a new line. At the end of this line is no spaceThe same line
+.IP \[bu] 2
+this
+.IP \[bu] 2
+is
+.IP \[bu] 2
+a test
+.IP \[bu] 2
+listing
+.IP \[bu] 2
+loooool
+
 .NH 2
 A sub heading
 .XS
@@ -64,7 +80,7 @@ down deeep
 Goes down to 6 sub levels
 .B1
 .QP
-This is a small quoted paragraph. I really hope this will work!
+This is a small quoted paragraph. I really hope this will work!Otherwise idk what to do lolhehe there is a box around me
 .B2
 .NH 2
 Testing bold text
@@ -126,5 +142,3 @@ source-highlight
 .DE
 \m[]
 .B2\m[]
-
-.TC

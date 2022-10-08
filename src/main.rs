@@ -16,16 +16,22 @@ fn main() {
     
     let out_filename  =  &filename[..(filename.len()-2)];
     let out_pdf = String::from(out_filename) + "pdf";
+    //let out_toc_pdf = String::from(out_filename) + "pdf";
+    let out_txt = String::from(out_filename) + "txt";
     let out_ps = String::from(out_filename) + "ps";
     //let out_html = String::from(out_filename) + "html";
     let out_filename = String::from(out_filename) + "ms";
 
     let ms_string = create_ms(&filename);
-    write_ms(&ms_string, &out_filename);
+    write_string(&ms_string, &out_filename);
+
+    let txt_string = create_txt(&filename);
+    write_string(&txt_string, &out_txt);
 
     convert_pictures(&out_filename);
     create_ps(&out_filename, &out_ps);
     //create_html(&out_filename, &out_html);
+    //create_toc_pdf(&out_filename, &out_toc_pdf);
     create_pdf(&out_ps, &out_pdf);
 }
 
@@ -81,6 +87,47 @@ fn convert_pictures(out_filename: &String) {
     }
 }
 
+fn create_toc_pdf(ms_file: &String, pdf_file: &String){
+    let output = Command::new("groff")
+        .arg("-ms")
+        .arg("-Tpdf")
+        .arg("-s")
+        .arg("-e")
+        .arg("-p")
+        .arg("-t")
+        .arg("-R")
+        .arg("-K")
+        .arg("-Z")
+        .arg("utf-8")
+        .arg("-k")
+        .arg(ms_file)
+        .output()
+        .expect("Failed to call groff. Make sure groff is installed!");
+
+    let mut out_pdf = std::fs::File::create(&pdf_file).expect("Can't create the pdf file!");
+    out_pdf.write_all(output.stdout.as_slice()).expect("Can't write to pdf file!");
+
+    let mut out_toc = std::fs::File::create("toc.ms").expect("Can't create the toc file!");
+    out_toc.write_all(output.stderr.as_slice()).expect("Can't write to toc file!");
+
+    let output = Command::new("groff")
+        .arg("-ms")
+        .arg("-Tpdf")
+        .arg("-s")
+        .arg("-e")
+        .arg("-p")
+        .arg("-t")
+        .arg("-R")
+        .arg("-K")
+        .arg("-Z")
+        .arg("utf-8")
+        .arg("-k")
+        .arg("-i")
+        .arg(ms_file)
+        .output()
+        .expect("Failed to call groff. Make sure groff is installed!");
+}
+
 fn create_ps(ms_file: &String, ps_file: &String){
     let output = Command::new("groff")
         .arg("-ms")
@@ -128,9 +175,9 @@ fn create_pdf(ps_file: &String, pdf_file: &String){
         .expect("Failed to call groff. Make sure groff is installed!");
 }
 
-fn write_ms(ms_string : &String, ms_file : &String){
-    let mut out_file = std::fs::File::create(&ms_file).expect("Can't create the ms file! ;(");
-    out_file.write_all(ms_string.as_bytes()).expect("Can't write to ms file :/");
+fn write_string(string : &String, file : &String){
+    let mut out_file = std::fs::File::create(&file).expect("Can't create file! ;(");
+    out_file.write_all(string.as_bytes()).expect("Can't write to file :/");
 }
 
 fn parse_args(args: &[String]) -> &String {
@@ -170,8 +217,8 @@ fn create_ms(drop_file: &String) -> String {
     let mut ms_string = String::new();
 
     ms_string += ".R1\naccumulate\n\ndatabase bib.ref\n\nmove-punctuation\n\n.R2\n\n";
-    //ms_string += ".ds N \\\\fB\\\\n+n.\\\\fR\n";
-    //ms_string += ".ps 20\n.vs 24\n.fam HN\n\n";
+    ms_string += ".ds N \\\\fB\\\\n+n.\\\\fR\n";
+    ms_string += ".ps 20\n.vs 24\n.fam HN\n\n";
     //ms_string += ".bp";
 
     //cover page
@@ -202,8 +249,6 @@ fn create_ms(drop_file: &String) -> String {
             ms_string += ".LG\n";
         }else if line.starts_with("#NormalText"){
             ms_string += ".NL\n";
-        }else if line.starts_with("#TOC"){
-            ms_string += ".TC\n";
         }else if line.starts_with("#AbstractBegin"){
             ms_string += ".AB\n";
         }else if line.starts_with("#AbstractEnd"){
@@ -268,6 +313,10 @@ fn create_ms(drop_file: &String) -> String {
             in_paragraph = true;
             in_quote = true;
             ms_string += ".B1\n.QP\n";
+        }else if line.starts_with("-"){
+            ms_string += ".IP \\[bu] 2\n";
+            ms_string += &line[2..];
+            ms_string += "\n";
         }else if line.starts_with("~"){
             let reference = line.strip_prefix("~").unwrap();
             ms_string += "\n.[\n";
@@ -349,4 +398,121 @@ fn create_ms(drop_file: &String) -> String {
         }
     }
     ms_string
+}
+
+fn create_txt(drop_file: &String) -> String {
+    let contents: String = read_contents(&drop_file);
+    let mut txt_string = String::new();
+   
+    let mut in_paragraph: bool = false;
+    let mut in_quote: bool = false;
+    for line in contents.lines(){
+        if line.starts_with("#T "){
+            txt_string += "\n---------------------------------\n\t\t[";
+            txt_string += &line[3..];
+            txt_string += "]\n---------------------------------\n";
+        }else if line.starts_with("#A "){
+            txt_string += "\n-=[AUTHOR: ";
+            txt_string += &line[3..];
+            txt_string += "]=-";
+        }else if line.starts_with("#I "){
+            txt_string += "\n";
+            txt_string += &line[3..];
+        }else if line.starts_with("#Date"){
+            //txt_string += ".DA\n";
+        }else if line.starts_with("#Break"){
+            //ms_string += ".bp\n";
+        }else if line.starts_with("#SmallerText"){
+            //ms_string += ".SM\n";
+        }else if line.starts_with("#LargerText"){
+            //ms_string += ".LG\n";
+        }else if line.starts_with("#NormalText"){
+            //ms_string += ".NL\n";
+        }else if line.starts_with("#AbstractBegin"){
+            txt_string += "-----\n :::ABSTRACT:::\n-----\n";
+        }else if line.starts_with("#AbstractEnd"){
+            txt_string += "\n-----\n";
+        }else if line.starts_with("#MathBegin"){
+            //ms_string += "\n.EQ\n";
+        }else if line.starts_with("#MathEnd"){
+            //ms_string += "\n.EN\n";
+        }else if line.starts_with("# "){
+            txt_string += "\n-=::[";
+            txt_string += &line[2..];
+            txt_string += "]::=-\n";
+        }else if line.starts_with("## "){
+            txt_string += "\n -=:[";
+            txt_string += &line[3..];
+            txt_string += "]:=-\n";
+        }else if line.starts_with("### "){
+            txt_string += "\n  -=[";
+            txt_string += &line[4..];
+            txt_string += "]=-\n";
+        }else if line.starts_with("#### "){
+            txt_string += "\n   -=";
+            txt_string += &line[5..];
+            txt_string += "=-\n";
+        }else if line.starts_with("##### "){
+            txt_string += "\n    -";
+            txt_string += &line[6..];
+            txt_string += "-\n";
+        }else if line.starts_with("###### "){
+            txt_string += "\n     ";
+            txt_string += &line[7..];
+            txt_string += "\n";
+        }else if line.starts_with("#Picture"){
+            //ascii art to come i guess
+        }else if line.starts_with("#Quote"){
+            in_paragraph = true;
+            in_quote = true;
+            txt_string += "____________________________________________________\n";
+        }else if line.starts_with("~"){
+            let reference = line.strip_prefix("~").unwrap();
+            txt_string += "\n[~";
+            txt_string += reference;
+            txt_string += "]\n";
+        }else if line.starts_with("#List"){
+            //ms_string += "\n.[\n";
+            //ms_string += "$LIST$";
+            //ms_string += "\n.]\n";
+        }else if line.starts_with("#Code"){/* 
+            let mut code_subs = line.split_ascii_whitespace();
+            code_subs.next(); //#Picture
+            let code_path = String::from(code_subs.next().unwrap());
+            let colored_code = color_code(&code_path);
+
+            ms_string += ".B1\n";
+            ms_string += &colored_code;
+            ms_string += "\n\\m[]\n.B2\\m[]\n";
+            */
+        }else if line.trim().is_empty(){
+            in_paragraph = false;
+            if in_quote {
+                txt_string += "____________________________________________________\n";
+                in_quote = false;
+            }else{
+                txt_string += "\n";
+            }
+        } else{
+            if !in_paragraph {
+                in_paragraph = true;
+                //ms_string += ".PP\n";
+            }
+            if in_quote {
+                txt_string += "|:: ";
+                txt_string += line.trim();
+
+                if 44 > line.trim().len(){
+                    let pad = 44 - line.trim().len();
+                    for _i in 0..pad {
+                        txt_string += " ";
+                    }
+                }
+                txt_string += " ::|\n";
+            }else{
+                txt_string += line.trim();
+            }
+        }
+    }
+    txt_string
 }

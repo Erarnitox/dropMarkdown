@@ -1,0 +1,51 @@
+
+---------------------------------
+		[A test Document]
+---------------------------------
+
+
+-=[AUTHOR: Erarnitox - David Partsch]=-
+DropSoft
+
+-----
+ :::ABSTRACT:::
+-----
+This Documentööäää is an example Document on how to use drop-markdown.Which is a wrapper around groff for easy writing of papers to be published on **dropsoft.org**
+
+-----
+
+
+
+-=::[Heading]::=-
+This was and example heading. at the end of this line is a spacea new line. At the end of this line is no spaceThe same line
+- this- is- a test- listing- loooool
+
+ -=:[A sub heading]:=-
+
+  -=[And so on]=-
+You get the point.
+s = sqrt { { sum from i=1 to inf ( x sub i - x bar ) sup 2 } over { N - 1 } }
+
+   -=down deeep=-
+Goes down to 6 sub levels
+____________________________________________________
+|:: This is a small quoted paragraph.            ::|
+|:: I really hope this will work!                ::|
+|:: Otherwise idk what to do lol                 ::|
+|:: hehe there is a box around me                ::|
+____________________________________________________
+
+ -=:[Testing bold text]:=-
+This is a small ++test++ for **bold** text.
+
+ -=:[Testing italic text]:=-
+This is a small test for ++italic++ text.
+
+ -=:[Pictures]:=-
+
+
+
+ -=:[Code]:=-
+some source highlighting
+[~source-highlight]
+, which can be very useful to have tbh. no one will write or read code without some cool colors!
