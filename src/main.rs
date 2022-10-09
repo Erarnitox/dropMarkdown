@@ -175,7 +175,7 @@ fn create_pdf(ps_file: &String, pdf_file: &String){
         .arg(ps_file)
         .arg(pdf_file)
         .output()
-        .expect("Failed to call groff. Make sure groff is installed!");
+        .expect("Failed to call ps2pdf. Make sure ps2pdf is installed!");
 }
 
 fn write_string(string : &String, file : &String){
@@ -209,7 +209,7 @@ fn color_code(code_file: &String) -> String {
         .arg("--out-format")
         .arg("groff_mm_color")
         .output()
-        .expect("Failed to call groff. Make sure groff is installed!");
+        .expect("Failed to call source-highlight. Make sure source-highlight is installed!");
 
         println!("{}", String::from_utf8(output.stderr).unwrap());
         String::from_utf8(output.stdout).unwrap()
