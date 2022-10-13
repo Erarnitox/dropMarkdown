@@ -1,6 +1,9 @@
 # dropMarkdown
 DropMarkdown is a simple tool to format our own Markdown style into pdf, ps and text files.
 
+## Example Screenshot
+Here is how an output pdf file might look like:
+![./res/example.png](./res/example.png)
 ## Dependencies
 - groff
 - ps2pdf
